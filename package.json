@@ -1,0 +1,32 @@
+{
+  "name": "Cardify",
+  "version": "1.0.0",
+  "description": "View your Spotify stats in the form of Trading Cards",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/stefanog1121/Cardify.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/stefanog1121/Cardify/issues"
+  },
+  "homepage": "https://github.com/stefanog1121/Cardify#readme",
+  "dependencies": {
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.18.3",
+    "express-session": "^1.18.0",
+    "fetch": "^1.1.0",
+    "node-fetch": "^3.3.2",
+    "npm-fetch": "0.0.9",
+    "querystring": "^0.2.1"
+  }
+}

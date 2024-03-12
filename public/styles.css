@@ -1,0 +1,153 @@
+@import url('https://fonts.googleapis.com/css2?family=Arvo:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+
+body, html {
+    font-family: "Arvo", serif;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    max-height: 100vh;
+}
+
+#page {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    flex-direction: column;
+    position: relative; 
+}
+
+#topBar {
+    width: 100%;
+    height: auto;
+    display: flex;
+    float: top;
+    align-items: flex-start;
+    justify-content: space-between;
+    transition: 0.35s;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid black;
+}
+
+#content {
+    display: flex;
+    flex-grow: 1;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    position: absolute; 
+}
+
+#logo {
+    align-items: center;
+    display: flex;
+    padding: 20px
+}
+
+.logoLetter {
+    position: relative;
+    display: inline-block;
+    font-size: 16pt;
+    z-index: 2; 
+}
+
+#logoCard {
+    width: 25px;
+    height: 31px;
+    border: 3px solid black;
+    border-radius: 2px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    margin-right: 5px;
+}
+
+#loginPage {
+    position: relative;
+    top: 78px;
+    width: 100%;
+    height: 60%;
+}
+
+#loginLogo {
+    height: 100%;
+    margin: auto;
+    width: 70%;
+    margin-left: 12%;
+    margin-top: 8%;
+    display: flex;
+    justify-content: center;
+}
+
+#bigLogo {
+    align-items: center;
+    display: flex;
+    padding: 20px;
+    width: auto;
+}
+
+.bigLogoLetter {
+    position: relative;
+    display: inline-block;
+    font-size: 72pt;
+    padding: 0 8px 0 8px;
+    z-index: 2; 
+}
+
+#bigLogoCard {
+    width: 340px;
+    height: 445px;
+    border: 6px solid black;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    margin-right: 5px;
+}
+
+#bigLogoText {
+    display: flex;
+    width: 25%;
+    height: auto;
+    font-size: 20pt;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    flex-direction: column;
+}
+
+#spotifyLogin {
+    width: 25vw;
+    height: 5vh;
+    font-family: "Arvo", serif;
+    font-size: 14pt;
+    background-color: #1DB954;
+}
+
+#infoBoxes {
+    display: flex;
+    align-items: flex-start; 
+    justify-content: space-between;
+    padding: 20px;
+}
+
+.linkBox {
+    border: 2px solid #0D1B2A;
+    border-radius: 5px;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    margin: 0 10px;
+    padding: 0 2px 0 2px; 
+    min-width: 30px; 
+    height: 30px;
+    font-size: 11pt;
+}
+
+.linkBox:hover {
+    background-color: lightgrey;
+}
