@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.setItem('spotify_refresh_token', tokens.refresh_token);
         
         document.getElementById('loginPage').style.display = 'none';
+        document.getElementById('decksPage').style.display = 'flex';
         fetchUserInfo(tokens.access_token);
 
         
@@ -39,4 +40,14 @@ function fetchUserInfo(accessToken) {
         userInfoDiv.style.display = 'block';
     })
     .catch(error => console.error('Error fetching user info:', error));
+}
+
+function switchTab(tab) {
+    if(tab===1) {
+
+    } else if (tan===2) {
+
+    } else {
+
+    }
 }

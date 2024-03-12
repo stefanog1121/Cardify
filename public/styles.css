@@ -41,7 +41,8 @@ body, html {
 #logo {
     align-items: center;
     display: flex;
-    padding: 20px
+    padding: 20px;
+    cursor: pointer;
 }
 
 .logoLetter {
@@ -68,7 +69,7 @@ body, html {
     position: relative;
     top: 78px;
     width: 100%;
-    height: 60%;
+    height: 70%;
 }
 
 #loginLogo {
@@ -76,7 +77,6 @@ body, html {
     margin: auto;
     width: 70%;
     margin-left: 12%;
-    margin-top: 8%;
     display: flex;
     justify-content: center;
 }
@@ -94,6 +94,7 @@ body, html {
     font-size: 72pt;
     padding: 0 8px 0 8px;
     z-index: 2; 
+    color: #C49251;
 }
 
 #bigLogoCard {
@@ -107,25 +108,41 @@ body, html {
     position: relative;
     z-index: 1;
     margin-right: 5px;
+    background-color: white;
+}
+
+#loginSplashText {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    gap: 20px;
+    padding-left: 30px;
 }
 
 #bigLogoText {
-    display: flex;
-    width: 25%;
-    height: auto;
+    width: 12vw;
+    text-align: center; 
     font-size: 20pt;
     align-items: center;
     justify-content: center;
-    margin: auto;
     flex-direction: column;
+    padding-bottom: 20px;
 }
 
 #spotifyLogin {
-    width: 25vw;
+    width: 20vw;
     height: 5vh;
     font-family: "Arvo", serif;
     font-size: 14pt;
+    border: 2px solid black;
+    border-radius: 1rem;
     background-color: #1DB954;
+    cursor: pointer;
+}
+#spotifyLogin:hover {
+    background-color: #0b8d30;
 }
 
 #infoBoxes {
@@ -136,7 +153,7 @@ body, html {
 }
 
 .linkBox {
-    border: 2px solid #0D1B2A;
+    border: 2px solid black;
     border-radius: 5px;
     display: flex; 
     align-items: center; 
@@ -146,8 +163,33 @@ body, html {
     min-width: 30px; 
     height: 30px;
     font-size: 11pt;
+    cursor: pointer;
 }
 
 .linkBox:hover {
     background-color: lightgrey;
+}
+
+#decksPage {
+    display: none;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+    top: 78px;
+    width: 100%;
+    height: 70%;
+}
+
+#decks {
+    width: 70%;
+    height: auto;
+}
+
+#tabs {
+
+}
+#surface {
+    width: 10%;
+    height: auto;
+    background-color: #C49251;
 }
