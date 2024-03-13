@@ -72,6 +72,7 @@ function populateArray(type, range, limit, accessToken) {
             throw new Error('No items available in the response');
         }
         listings = transformAPIToListings(data.items, type);
+        console.log(listings)
     })
     .catch(error => console.error('Error fetching user info:', error));
 };
@@ -80,19 +81,33 @@ function populateArray(type, range, limit, accessToken) {
  function transformAPIToListings(apiData, type) {
     return apiData.map(item => {
         if (type === 'tracks') {
+            const image = item.album.images.length > 0 ? item.album.images[0].url : undefined;
             return {
                 id: item.id,
                 type: type,
                 title: item.name,
+                album: item.album.name,
+                type: item.album.type,
+                release: item.album.release_date +" "+ item.album.release_date_precision,
+                duration: Math.round((item.duration_ms / 1000) / 60) + ":" + 
+                    (("0" + Math.floor((item.duration_ms / 1000) % 60)).slice(-2)),
                 artist: item.artists.map(artist => artist.name).join(', '), 
-                image: item.album.images[0].url 
+                artistGenre: item.artists.map(artist => artist.genres).join(','),
+                artistID: item.artists.map(artist => artist.id).join(','),
+                trackNum: item.track_number,
+                pop: item.popularity,
+                image: image
             };
         } else if (type === 'artists') {
+            const image = item.album.images.length > 0 ? item.album.images[0].url : undefined;
             return {
                 id: item.id,
                 type: type,
                 title: item.name,
-                image: item.images[0].url 
+                pop: item.popularity,
+                followers: item.followers.total,
+                artistGenre: item.artists.map(artist => artist.genres).join(','),
+                image: image
             };
         }
     });
@@ -103,8 +118,20 @@ function switchTab(tab) {
     const surface = document.getElementById('surface');
     if(tab===1) {
         populateArray("tracks","long_term", 50, accessToken);
+        generateDeck(surface)
     } else {
         populateArray("artists","long_term", 50, accessToken);
+        generateDeck(surface)
     }
 }
 
+function generateDeck(surface) {
+    listings.forEach(listing => {
+        const cardElement = createCard(listing);
+        surface.appendChild(cardElement);
+    });
+}
+
+function createCard(data) {
+
+}
