@@ -113,6 +113,7 @@ function populateArray(type, range, limit, accessToken) {
     });
 }
 
+// Starts generation of new cards/decks after user clicks an option
 function switchTab(tab) {
     const accessToken = sessionStorage.getItem("spotify_access_token")
     const surface = document.getElementById('surface');
