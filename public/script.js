@@ -174,10 +174,13 @@ function createCard(data) {
     card.appendChild(head);
 
     if (data.image) {
+        let cardBody = document.createElement('div')
         let img = document.createElement('img');
         img.className = 'cardImg';
+        cardBody.className = 'cardBody';
         img.src = data.image;
-        card.appendChild(img);
+        cardBody.appendChild(img)
+        card.appendChild(cardBody);
     }
 
     let foot = document.createElement('div');

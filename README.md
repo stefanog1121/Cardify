@@ -2,7 +2,7 @@
 View your Spotify stats in the form of Trading Cards
 
 
-TODO: 
+### TODO: 
 1. Finish GenerateDeck() / CreateCard()
 2. Finalize Top Tracks Generation
 3. Create Artist Card Template
@@ -11,3 +11,9 @@ TODO:
 6. Logout button + flow
 7. About page
 8. Host site!
+
+
+### Potential V2:
+* Remake with React framework, compartmentalize cards (duh why did i not think of this)
+* Use Canvas API to draw more interesting designs
+(https://friendofpixels.com/posts/making-canvas-cards)
