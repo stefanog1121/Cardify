@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('loginPage').style.display = 'none';
         document.getElementById('decksPage').style.display = 'flex';
 
+        switchTab(1);
         
         window.history.pushState("", document.title, window.location.pathname + window.location.search);
     }
@@ -68,11 +69,12 @@ function populateArray(type, range, limit, accessToken) {
         return response.json();
     })
     .then(data => {
+        console.log('API Data:', data);
         if (!data.items) {
             throw new Error('No items available in the response');
         }
         listings = transformAPIToListings(data.items, type);
-        console.log(listings)
+        generateDeck()
     })
     .catch(error => console.error('Error fetching user info:', error));
 };
@@ -87,7 +89,7 @@ function populateArray(type, range, limit, accessToken) {
                 type: type,
                 title: item.name,
                 album: item.album.name,
-                type: item.album.type,
+                albType: item.album.type,
                 release: item.album.release_date +" "+ item.album.release_date_precision,
                 duration: Math.round((item.duration_ms / 1000) / 60) + ":" + 
                     (("0" + Math.floor((item.duration_ms / 1000) % 60)).slice(-2)),
@@ -116,23 +118,111 @@ function populateArray(type, range, limit, accessToken) {
 // Starts generation of new cards/decks after user clicks an option
 function switchTab(tab) {
     const accessToken = sessionStorage.getItem("spotify_access_token")
-    const surface = document.getElementById('surface');
     if(tab===1) {
         populateArray("tracks","long_term", 50, accessToken);
-        generateDeck(surface)
     } else {
         populateArray("artists","long_term", 50, accessToken);
-        generateDeck(surface)
     }
 }
 
-function generateDeck(surface) {
+function generateDeck() {
+    const surface = document.getElementById('surface');
+    surface.innerHTML = '';
     listings.forEach(listing => {
         const cardElement = createCard(listing);
         surface.appendChild(cardElement);
+        i++
     });
 }
 
 function createCard(data) {
+    let card = document.createElement('div');
+    card.className = 'card';
 
+    let head = document.createElement('div');
+    head.className = 'head';
+
+    let headType = document.createElement('div');
+    headType.className = 'headType';
+    headType.textContent = data.type === 'tracks' ? 'Track' : data.type === 'artists' ? 'Artist' : '';
+
+    let headTitle = document.createElement('div');
+    headTitle.className = 'headTitle';
+    headTitle.textContent = data.title;
+
+    head.appendChild(headType);
+    head.appendChild(headTitle);
+
+    if (data.type === 'tracks') {
+        let headArtist = document.createElement('div');
+        headArtist.className = 'headArtist';
+        headArtist.textContent = data.artist;
+
+        let headAlbum = document.createElement('div');
+        headAlbum.className = 'headAlbum';
+        headAlbum.textContent = data.album;
+
+        let headDur = document.createElement('div');
+        headDur.className = 'headDur';
+        headDur.textContent = data.duration;
+
+        head.appendChild(headArtist);
+        head.appendChild(headAlbum);
+        head.appendChild(headDur);
+    }
+
+    card.appendChild(head);
+
+    if (data.image) {
+        let img = document.createElement('img');
+        img.className = 'cardImg';
+        img.src = data.image;
+        card.appendChild(img);
+    }
+
+    let foot = document.createElement('div');
+    foot.className = 'foot';
+
+    if (data.type === 'tracks') {
+        let footAlbType = document.createElement('div');
+        footAlbType.className = 'footAlbTyp';
+        footAlbType.textContent = data.albType === 'single' ? 'Single' : (data.albType === 'album' || data.albType === 'compilation') ? data.trackNum : '';
+
+        let footGenre = document.createElement('div');
+        footGenre.className = 'footGenre';
+        footGenre.textContent = data.artistGenre;
+
+        let footPop = document.createElement('div');
+        footPop.className = 'footPop';
+        footPop.textContent = data.pop;
+
+        let footRel = document.createElement('div');
+        footRel.className = 'footRel';
+        footRel.textContent = data.release;
+
+        foot.appendChild(footAlbType);
+        foot.appendChild(footGenre);
+        foot.appendChild(footPop);
+        foot.appendChild(footRel);
+    } else if (data.type === 'artists') {
+        let footGenre = document.createElement('div');
+        footGenre.className = 'footGenre';
+        footGenre.textContent = data.artistGenre;
+
+        let footPop = document.createElement('div');
+        footPop.className = 'footPop';
+        footPop.textContent = `Popularity: ${data.pop}`;
+
+        let footFollowers = document.createElement('div');
+        footFollowers.className = 'footFollowers';
+        footFollowers.textContent = `Followers: ${data.followers}`;
+
+        foot.appendChild(footGenre);
+        foot.appendChild(footPop);
+        foot.appendChild(footFollowers);
+    }
+
+    card.appendChild(foot);
+
+    return card;
 }

@@ -41,19 +41,28 @@
                         <button id="spotifyLogin">Login with Spotify</button>
                     </div>
                 </div>
+                <div id="footer">
+                    <hr>
+                    <p class="info">
+                        By <a href="https://github.com/stefanog1121">Stefano Farro</a>
+                      </p>
+                      <p class="info">
+                        <a href="index.html">Home</a> | <a href="about.html">About</a> |
+                        <a href="contact.html">Contact</a>
+                      </p>
+                </div>
             </div>
             <div id="decksPage">
                 <div id="decks">
-                    <div id="tabs" onload=switchTab(1)>
-                        <div class="tab" onclick=switchTab(1)>
+                    <div id="tabs">
+                        <div id="trackTab" class="tab tab-left" onclick=switchTab(1)>
                             Top Tracks
                         </div>
-                        <div class="tab" onclick=switchTab(2)>
+                        <div id="artistTab" class="tab tab-right" onclick=switchTab(2)>
                             Top Artists
                         </div>
                     </div>
                     <div id="surface">
-                        if you leave me now, you'll take away the biggest part of meeee
                     </div>
                 </div>
             </div>
