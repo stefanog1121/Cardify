@@ -249,12 +249,11 @@ body, html {
 }
 
 .card {
-    width: 300px;
-    height: 425px;
-    padding: 10px;
-    background-image: url('./Cardify Templates/cardTemplate.png');
-    background-size: contain;
-    border: 1px solid black;
+    width: 314px;
+    height: 455px;
+    padding: 14px;
+    background-image: url('cardTemplate.png');
+    background-size: cover;
     border-radius: 1rem;
     font-size: small;
 }
@@ -276,6 +275,8 @@ body, html {
 }
 
 .headType{
+    font-size: medium;
+    font-style: italic;
 
 }
 

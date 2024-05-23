@@ -144,7 +144,7 @@ function createCard(data) {
 
     let headType = document.createElement('div');
     headType.className = 'headType';
-    headType.textContent = data.type === 'tracks' ? 'Track' : data.type === 'artists' ? 'Artist' : '';
+    headType.textContent = data.type === 'tracks' ? 'TRACK' : data.type === 'artists' ? 'ARTIST' : '';
 
     let headTitle = document.createElement('div');
     headTitle.className = 'headTitle';
