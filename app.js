@@ -28,7 +28,7 @@ let stateKey = 'spotify_auth_state'; // Cookie Name
 
 let app = express();
 
-app.use(express.static(__dirname))
+app.use(express.static(__dirname + '/public'))
 
     .use(cors())
     .use(cookieParser());

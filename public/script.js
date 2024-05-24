@@ -131,7 +131,6 @@ function generateDeck() {
     listings.forEach(listing => {
         const cardElement = createCard(listing);
         surface.appendChild(cardElement);
-        i++
     });
 }
 
@@ -158,30 +157,54 @@ function createCard(data) {
         headArtist.className = 'headArtist';
         headArtist.textContent = data.artist;
 
+        let headArtistLabel = document.createElement('div');
+        headArtistLabel.className = 'smallLabel';
+        headArtistLabel.textContent = 'Art|  ';
+        headArtist.prepend(headArtistLabel);
+
         let headAlbum = document.createElement('div');
         headAlbum.className = 'headAlbum';
         headAlbum.textContent = data.album;
+
+        let headAlbumLabel = document.createElement('div');
+        headAlbumLabel.className = 'smallLabel';
+        headAlbumLabel.textContent = 'Alb|  ';
+        headAlbum.prepend(headAlbumLabel);
 
         let headDur = document.createElement('div');
         headDur.className = 'headDur';
         headDur.textContent = data.duration;
 
-        head.appendChild(headArtist);
-        head.appendChild(headAlbum);
+        let headDurLabel = document.createElement('div');
+        headDurLabel.className = 'smallLabel';
+        headDurLabel.textContent = 'Dur|  ';
+        headDur.prepend(headDurLabel);
+
+        let headAlbumArtist = document.createElement('div');
+        headAlbumArtist.className = 'headAlbumArtist';
+
+        headAlbumArtist.appendChild(headArtist);
+        headAlbumArtist.appendChild(headAlbum);
+
         head.appendChild(headDur);
+        head.appendChild(headAlbumArtist);
+    }
+
+    if (data.type === 'artists') {
+     
     }
 
     card.appendChild(head);
 
-    if (data.image) {
-        let cardBody = document.createElement('div')
-        let img = document.createElement('img');
-        img.className = 'cardImg';
-        cardBody.className = 'cardBody';
-        img.src = data.image;
-        cardBody.appendChild(img)
-        card.appendChild(cardBody);
-    }
+    let cardBody = document.createElement('div');
+    cardBody.className = 'cardBody';
+
+    let img = document.createElement('img');
+    img.className = 'cardImg';
+    img.src = data.image;
+
+    cardBody.appendChild(img)
+    card.appendChild(cardBody);
 
     let foot = document.createElement('div');
     foot.className = 'foot';
