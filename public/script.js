@@ -143,7 +143,7 @@ function createCard(data) {
 
     let headType = document.createElement('div');
     headType.className = 'headType';
-    headType.textContent = data.type === 'tracks' ? 'TRACK' : data.type === 'artists' ? 'ARTIST' : '';
+    headType.textContent = data.type === 'tracks' ? 'SONG' : data.type === 'artists' ? 'ARTIST' : '';
 
     let headTitle = document.createElement('div');
     headTitle.className = 'headTitle';
@@ -191,7 +191,7 @@ function createCard(data) {
     }
 
     if (data.type === 'artists') {
-     
+     // Artist Specific Card Generation
     }
 
     card.appendChild(head);
@@ -212,7 +212,12 @@ function createCard(data) {
     if (data.type === 'tracks') {
         let footAlbType = document.createElement('div');
         footAlbType.className = 'footAlbTyp';
-        footAlbType.textContent = data.albType === 'single' ? 'Single' : (data.albType === 'album' || data.albType === 'compilation') ? data.trackNum : '';
+        footAlbType.textContent = data.trackNum;
+
+        let footAlbTypeLabel = document.createElement('div');
+        footAlbTypeLabel.className = 'smallLabel';
+        footAlbTypeLabel.textContent = 'Track|  ';
+        footAlbType.prepend(footAlbTypeLabel);
 
         let footGenre = document.createElement('div');
         footGenre.className = 'footGenre';

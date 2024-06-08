@@ -261,7 +261,7 @@ body, html {
 }
 
 .smallLabel {
-    font-size: smaller;
+    font-size: xx-small;
     color: gray;
     margin-right: 5px
 }
