@@ -1,3 +1,5 @@
+import ColorThief from './node_modules/colorthief/dist/color-thief.mjs'
+
 function clear() {
     sessionStorage.removeItem("spotify_access_token")
 }
@@ -252,8 +254,18 @@ function createCard(data) {
         foot.appendChild(footPop);
         foot.appendChild(footFollowers);
     }
-
     card.appendChild(foot);
 
     return card;
+}
+
+const colorThief = new ColorThief();
+const imgURL = 'https://media.pitchfork.com/photos/61649694110e7cd222907396/1:1/w_450%2Cc_limit/Black-Country-New-Road.jpg';
+
+if (img.complete) {
+  colorThief.getColor(url(imgURL));
+} else {
+  image.addEventListener('load', function() {
+    colorThief.getColor(url(imgURL));
+  });
 }

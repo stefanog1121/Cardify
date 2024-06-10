@@ -29,9 +29,11 @@ let stateKey = 'spotify_auth_state'; // Cookie Name
 let app = express();
 
 app.use(express.static(__dirname + '/public'))
-
     .use(cors())
     .use(cookieParser());
+
+app.use('/node_modules', express.static(__dirname + '/node_modules'));
+
 
 // Watch for Login button press on HTML page
 app.get('/login', function (req, res) { 
