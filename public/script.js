@@ -127,29 +127,100 @@ function switchTab(tab) {
     }
 }
 
-function generateDeck() {
+async function generateDeck() {
     const surface = document.getElementById('surface');
     surface.innerHTML = '';
-    listings.forEach(listing => {
-        const cardElement = createCard(listing);
-        surface.appendChild(cardElement);
+
+    // Create a card for the first listing only
+    if (listings.length > 0) {
+        try {
+            const cardElement = await createCard(listings[0]);
+            surface.appendChild(cardElement);
+        } catch (error) {
+            console.error('Error creating card:', error);
+        }
+    }
+}
+
+/*  Generates all cards
+async function generateDeck() {
+    const surface = document.getElementById('surface');
+    surface.innerHTML = '';
+    const cardPromises = listings.map(listing => createCard(listing));
+    
+    try {
+        const cardElements = await Promise.all(cardPromises);
+        cardElements.forEach(cardElement => {
+            surface.appendChild(cardElement);
+        });
+    } catch (error) {
+        console.error('Error creating cards:', error);
+    }
+}
+*/
+
+function loadImage(url) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = 'Anonymous';
+        img.src = url;
+        img.onload = () => resolve(img);
+        img.onerror = reject;
     });
 }
 
-function createCard(data) {
-    const canvas = document.createElement(canvas);
-    const ctx = canvas.getContext('2D');
+async function createCard(data) {
+    // create canvas object and obtain its context for drawing 
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
     canvas.width = 420;
     canvas.height = 590;
 
-    const template = new Image();
-    template.src = url('cardTemplate.png');
-    ctx.drawImage(template, 0,0, canvas.width, canvas.height);
+    try {
+        const artwork = await loadImage(data.image);
+        const template = await loadImage('cardTemplate.png');
+        
+        // ColorThief API, obtain palette, and validate generated colors
+        const colorThief = new ColorThief();
+        const rawPalette = colorThief.getPalette(artwork, 10, 10);
+        const palette = checkColors(rawPalette);
+        
+        drawTemplateTint(ctx, template, palette); // Draw color tint to template and the template to canvas
+        drawListingData(ctx, data);               // Draw listing specific text to canvas
+        ctx.drawImage(artwork, 20, 180, 360, 360); // ------------------------------------------ REMOVE THIS LINE LATER ---------------------------
+    } catch (error) {
+        console.error('Failed to load image or template', error);
+    }
 
-    // add artwork
-    // add colorizations based on artwork
-    // title, artist, album, duration, release date, track num, release date, popularity, genre, followers
-    // artist specific functionality
+    return canvas;
+}
+
+function rgbToHex(r, g, b) {
+    return ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0').toUpperCase();
+}
+
+function checkColors(palette) {
+
+    // -----------------------------IMPLEMENT EDGE CASE HANDLING------------------
+    return palette.map(color => {
+        return rgbToHex(color[0], color[1], color[2]);
+    });
+}
+
+function drawTemplateTint(ctx, template, palette) {
+    ctx.drawImage(template, 0, 0, ctx.canvas.width, ctx.canvas.height)
+
+    console.log(palette);
+    ctx.fillStyle = '#'+ palette[0] + 'A6';   
+     ctx.globalCompositeOperation = 'multiply';
+    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+    ctx.globalCompositeOperation = 'source-over';
+}
+
+function drawListingData(ctx, data) {
+    return;
+}
+
 /*
 Old createCard function, refactor to support colorThief/Canvas
 function createCard(data) {

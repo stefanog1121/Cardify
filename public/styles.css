@@ -325,33 +325,3 @@ body, html {
     justify-content: space-between;
     padding: 15px 15px 0 15px;
 }
-
-
-
-.foot{
-    height: 15%;
-}
-
-.footAlbType{
-
-}
-
-.footGenre{
-
-}
-
-.footPop{
-
-}
-
-.footRel{
-
-}
-.footFollowers{
-
-}
-
-/*
-    https://lokeshdhakar.com/projects/color-thief/#api
-    Get color pallete from image (for cards)
-*/
