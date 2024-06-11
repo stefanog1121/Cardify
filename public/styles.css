@@ -135,13 +135,13 @@ body, html {
     height: 5vh;
     font-family: "Arvo", serif;
     font-size: 14pt;
-    border: 2px solid black;
     border-radius: 1rem;
-    background-color: #1DB954;
+    background-color: #1db954;
+    border: none;
     cursor: pointer;
 }
 #spotifyLogin:hover {
-    background-color: #0b8d30;
+    background-color: #3bdb73;
 }
 
 #infoBoxes {

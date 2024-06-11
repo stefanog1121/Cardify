@@ -137,6 +137,22 @@ function generateDeck() {
 }
 
 function createCard(data) {
+    const canvas = document.createElement(canvas);
+    const ctx = canvas.getContext('2D');
+    canvas.width = 420;
+    canvas.height = 590;
+
+    const template = new Image();
+    template.src = url('cardTemplate.png');
+    ctx.drawImage(template, 0,0, canvas.width, canvas.height);
+
+    // add artwork
+    // add colorizations based on artwork
+    // title, artist, album, duration, release date, track num, release date, popularity, genre, followers
+    // artist specific functionality
+/*
+Old createCard function, refactor to support colorThief/Canvas
+function createCard(data) {
     let card = document.createElement('div');
     card.className = 'card';
 
@@ -254,18 +270,23 @@ function createCard(data) {
         foot.appendChild(footPop);
         foot.appendChild(footFollowers);
     }
+    
     card.appendChild(foot);
-
+    logColors(data.image)
     return card;
 }
+*/
+function logColors(data) {
+    const colorThief = new ColorThief();
+    const imgURL = data;
+    const image = new Image();
+    image.src = imgURL;
+    image.crossOrigin = 'Anonymous';
 
-const colorThief = new ColorThief();
-const imgURL = 'https://media.pitchfork.com/photos/61649694110e7cd222907396/1:1/w_450%2Cc_limit/Black-Country-New-Road.jpg';
-
-if (img.complete) {
-  colorThief.getColor(url(imgURL));
-} else {
-  image.addEventListener('load', function() {
-    colorThief.getColor(url(imgURL));
-  });
-}
+    if (image.complete) {
+    console.log(colorThief.getColor(image));
+    } else {
+    image.addEventListener('load', function() {
+        console.log(colorThief.getColor(image));
+    });
+}}
