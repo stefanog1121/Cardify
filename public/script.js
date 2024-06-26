@@ -1,7 +1,5 @@
-import ColorThief from './node_modules/colorthief/dist/color-thief.mjs'
-
 function clear() {
-    sessionStorage.removeItem("spotify_access_token")
+    sessionStorage.removeItem("spotify_access_token");
 }
 
 function parseHashParams() {
@@ -32,24 +30,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-/*
---- Not Currently in use, might be able to delete --
-function fetchUserInfo(accessToken) {
-    fetch('https://api.spotify.com/v1/me', {
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        const userInfoDiv = document.getElementById('user-info');
-        userInfoDiv.textContent = `Welcome, ${data.display_name}`;
-        userInfoDiv.style.display = 'block';
-    })
-    .catch(error => console.error('Error fetching user info:', error));
-}
-*/
-
 function getAccessToken() {
     return sessionStorage.getItem('spotify_access_token');
 }
@@ -59,7 +39,7 @@ let listings = [];
 
 // Fetch API Data from Spotify based on parameters, then assign response data to listings[]
 function populateArray(type, range, limit, accessToken) {
-    fetch('https://api.spotify.com/v1/me/top/'+type+'?time_range='+range+'&limit='+limit, {
+    fetch('https://api.spotify.com/v1/me/top/' + type + '?time_range=' + range + '&limit=' + limit, {
         headers: {
             'Authorization': `Bearer ${accessToken}`
         }
@@ -76,13 +56,12 @@ function populateArray(type, range, limit, accessToken) {
             throw new Error('No items available in the response');
         }
         listings = transformAPIToListings(data.items, type);
-        generateDeck()
+        generateDeck();
     })
     .catch(error => console.error('Error fetching user info:', error));
-};
+}
 
- // Correctly map API data to an array of objects.
- function transformAPIToListings(apiData, type) {
+function transformAPIToListings(apiData, type) {
     return apiData.map(item => {
         if (type === 'tracks') {
             const image = item.album.images.length > 0 ? item.album.images[0].url : undefined;
@@ -92,7 +71,7 @@ function populateArray(type, range, limit, accessToken) {
                 title: item.name,
                 album: item.album.name,
                 albType: item.album.type,
-                release: item.album.release_date +" "+ item.album.release_date_precision,
+                release: item.album.release_date + " " + item.album.release_date_precision,
                 duration: Math.round((item.duration_ms / 1000) / 60) + ":" + 
                     (("0" + Math.floor((item.duration_ms / 1000) % 60)).slice(-2)),
                 artist: item.artists.map(artist => artist.name).join(', '), 
@@ -103,27 +82,26 @@ function populateArray(type, range, limit, accessToken) {
                 image: image
             };
         } else if (type === 'artists') {
-            const image = item.album.images.length > 0 ? item.album.images[0].url : undefined;
+            const image = item.images.length > 0 ? item.images[0].url : undefined;
             return {
                 id: item.id,
                 type: type,
                 title: item.name,
                 pop: item.popularity,
                 followers: item.followers.total,
-                artistGenre: item.artists.map(artist => artist.genres).join(','),
+                artistGenre: item.genres.join(','),
                 image: image
             };
         }
     });
 }
 
-// Starts generation of new cards/decks after user clicks an option
 function switchTab(tab) {
-    const accessToken = sessionStorage.getItem("spotify_access_token")
-    if(tab===1) {
-        populateArray("tracks","long_term", 50, accessToken);
+    const accessToken = sessionStorage.getItem("spotify_access_token");
+    if (tab === 1) {
+        populateArray("tracks", "long_term", 50, accessToken);
     } else {
-        populateArray("artists","long_term", 50, accessToken);
+        populateArray("artists", "long_term", 50, accessToken);
     }
 }
 
@@ -134,7 +112,9 @@ async function generateDeck() {
     // Create a card for the first listing only
     if (listings.length > 0) {
         try {
+            console.log('Generating card for listing:', listings[0]);
             const cardElement = await createCard(listings[0]);
+            console.log('Appending card element to surface');
             surface.appendChild(cardElement);
         } catch (error) {
             console.error('Error creating card:', error);
@@ -142,22 +122,43 @@ async function generateDeck() {
     }
 }
 
-/*  Generates all cards
-async function generateDeck() {
-    const surface = document.getElementById('surface');
-    surface.innerHTML = '';
-    const cardPromises = listings.map(listing => createCard(listing));
-    
+async function createCard(data) {
+    console.log('Creating card for data:', data);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = 420;
+    canvas.height = 590;
+
     try {
-        const cardElements = await Promise.all(cardPromises);
-        cardElements.forEach(cardElement => {
-            surface.appendChild(cardElement);
+        const artwork = await loadImage(data.image);
+        console.log('Artwork loaded:', artwork);
+        const template = await loadImage('cardTemplate.png');
+        console.log('Template loaded:', template);
+
+        const requestBody = JSON.stringify({ imageUrl: artwork.src });
+        console.log('Sending request with body:', requestBody);
+
+        const paletteResponse = await fetch('http://localhost:8080/get-palette', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: requestBody // Ensure JSON.stringify is used here
         });
+
+        const palette = await paletteResponse.json();
+        console.log('Palette received:', palette);
+
+        drawTemplateTint(ctx, template, palette); // Draw color tint to template and the template to canvas
+        drawListingData(ctx, data);               // Draw listing specific text to canvas
+        ctx.drawImage(artwork, 50, 145, 320, 320); // ------------------------------------------ REMOVE THIS LINE LATER ---------------------------
+        console.log('Artwork drawn on canvas');
     } catch (error) {
-        console.error('Error creating cards:', error);
+        console.error('Failed to load image or template', error);
     }
+
+    return canvas;
 }
-*/
 
 function loadImage(url) {
     return new Promise((resolve, reject) => {
@@ -169,195 +170,60 @@ function loadImage(url) {
     });
 }
 
-async function createCard(data) {
-    // create canvas object and obtain its context for drawing 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    canvas.width = 420;
-    canvas.height = 590;
+function drawTemplateTint(ctx, template, palette) {
+    ctx.drawImage(template, 0, 0, ctx.canvas.width, ctx.canvas.height);
+    
+    const imageData = ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-    try {
-        const artwork = await loadImage(data.image);
-        const template = await loadImage('cardTemplate.png');
-        
-        // ColorThief API, obtain palette, and validate generated colors
-        const colorThief = new ColorThief();
-        const rawPalette = colorThief.getPalette(artwork, 10, 10);
-        const palette = checkColors(rawPalette);
-        
-        drawTemplateTint(ctx, template, palette); // Draw color tint to template and the template to canvas
-        drawListingData(ctx, data);               // Draw listing specific text to canvas
-        ctx.drawImage(artwork, 20, 180, 360, 360); // ------------------------------------------ REMOVE THIS LINE LATER ---------------------------
-    } catch (error) {
-        console.error('Failed to load image or template', error);
+    // Break the palette into its colors
+    const darkMuted = palette.darkMuted.rgb;
+    const darkVibrant = palette.darkVibrant.rgb;
+    const lightMuted = palette.lightMuted.rgb;
+    const lightVibrant = palette.lightVibrant.rgb;
+    const muted = palette.Muted.rgb;
+    const vibrant = palette.Vibrant.rgb;
+    console.log('Dark Muted: ' + darkMuted)
+
+    for (let y = 17; y <= 573; y++) {
+        for (let x = 17; x <= 403; x++) {
+            const index = (y * 420 + x) * 4;
+
+            // Check if the pixel is transparent
+            if (imageData.data[index + 3] < 140) {
+                // Change the color to the darkMuted color
+                imageData.data[index] = r;     // Red
+                imageData.data[index + 1] = g; // Green
+                imageData.data[index + 2] = b; // Blue
+                imageData.data[index + 3] = 255; // Alpha
+            }
+        }
     }
 
-    return canvas;
-}
+    for (var i = 0; i < imageData.data.length; i += 4) {
+        if((imageData.data[i] == 64 &&
+           imageData.data[i+1] == 60 &&
+           imageData.data[i+2] == 60) ||
+            (imageData.data[i] == 159 &&
+            imageData.data[i+1] == 157 &&
+            imageData.data[i+2] == 157) ||
+            (imageData.data[i] == 153 &&
+            imageData.data[i+1] == 151 &&
+            imageData.data[i+2] == 151) ||
+            (imageData.data[i] == 108 &&
+            imageData.data[i+1] == 105 &&
+            imageData.data[i+2] == 105)
+        ){
+            imageData.data[i] = darkMuted[0];
+            imageData.data[i+1] = darkMuted[1];
+            imageData.data[i+2] = darkMuted[2];
+        }
+    }
 
-function rgbToHex(r, g, b) {
-    return ((r << 16) | (g << 8) | b).toString(16).padStart(6, '0').toUpperCase();
-}
-
-function checkColors(palette) {
-
-    // -----------------------------IMPLEMENT EDGE CASE HANDLING------------------
-    return palette.map(color => {
-        return rgbToHex(color[0], color[1], color[2]);
-    });
-}
-
-function drawTemplateTint(ctx, template, palette) {
-    ctx.drawImage(template, 0, 0, ctx.canvas.width, ctx.canvas.height)
-
-    console.log(palette);
-    ctx.fillStyle = '#'+ palette[0] + 'A6';   
-     ctx.globalCompositeOperation = 'multiply';
-    ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
-    ctx.globalCompositeOperation = 'source-over';
+    ctx.putImageData(imageData, 0, 0);
+    console.log('Template tint drawn');
 }
 
 function drawListingData(ctx, data) {
-    return;
+    console.log('Drawing listing data');
+    // Implement your drawing logic here
 }
-
-/*
-Old createCard function, refactor to support colorThief/Canvas
-function createCard(data) {
-    let card = document.createElement('div');
-    card.className = 'card';
-
-    let head = document.createElement('div');
-    head.className = 'head';
-
-    let headType = document.createElement('div');
-    headType.className = 'headType';
-    headType.textContent = data.type === 'tracks' ? 'SONG' : data.type === 'artists' ? 'ARTIST' : '';
-
-    let headTitle = document.createElement('div');
-    headTitle.className = 'headTitle';
-    headTitle.textContent = data.title;
-
-    head.appendChild(headType);
-    head.appendChild(headTitle);
-
-    if (data.type === 'tracks') {
-        let headArtist = document.createElement('div');
-        headArtist.className = 'headArtist';
-        headArtist.textContent = data.artist;
-
-        let headArtistLabel = document.createElement('div');
-        headArtistLabel.className = 'smallLabel';
-        headArtistLabel.textContent = 'Art|  ';
-        headArtist.prepend(headArtistLabel);
-
-        let headAlbum = document.createElement('div');
-        headAlbum.className = 'headAlbum';
-        headAlbum.textContent = data.album;
-
-        let headAlbumLabel = document.createElement('div');
-        headAlbumLabel.className = 'smallLabel';
-        headAlbumLabel.textContent = 'Alb|  ';
-        headAlbum.prepend(headAlbumLabel);
-
-        let headDur = document.createElement('div');
-        headDur.className = 'headDur';
-        headDur.textContent = data.duration;
-
-        let headDurLabel = document.createElement('div');
-        headDurLabel.className = 'smallLabel';
-        headDurLabel.textContent = 'Dur|  ';
-        headDur.prepend(headDurLabel);
-
-        let headAlbumArtist = document.createElement('div');
-        headAlbumArtist.className = 'headAlbumArtist';
-
-        headAlbumArtist.appendChild(headArtist);
-        headAlbumArtist.appendChild(headAlbum);
-
-        head.appendChild(headDur);
-        head.appendChild(headAlbumArtist);
-    }
-
-    if (data.type === 'artists') {
-     // Artist Specific Card Generation
-    }
-
-    card.appendChild(head);
-
-    let cardBody = document.createElement('div');
-    cardBody.className = 'cardBody';
-
-    let img = document.createElement('img');
-    img.className = 'cardImg';
-    img.src = data.image;
-
-    cardBody.appendChild(img)
-    card.appendChild(cardBody);
-
-    let foot = document.createElement('div');
-    foot.className = 'foot';
-
-    if (data.type === 'tracks') {
-        let footAlbType = document.createElement('div');
-        footAlbType.className = 'footAlbTyp';
-        footAlbType.textContent = data.trackNum;
-
-        let footAlbTypeLabel = document.createElement('div');
-        footAlbTypeLabel.className = 'smallLabel';
-        footAlbTypeLabel.textContent = 'Track|  ';
-        footAlbType.prepend(footAlbTypeLabel);
-
-        let footGenre = document.createElement('div');
-        footGenre.className = 'footGenre';
-        footGenre.textContent = data.artistGenre;
-
-        let footPop = document.createElement('div');
-        footPop.className = 'footPop';
-        footPop.textContent = data.pop;
-
-        let footRel = document.createElement('div');
-        footRel.className = 'footRel';
-        footRel.textContent = data.release;
-
-        foot.appendChild(footAlbType);
-        foot.appendChild(footGenre);
-        foot.appendChild(footPop);
-        foot.appendChild(footRel);
-    } else if (data.type === 'artists') {
-        let footGenre = document.createElement('div');
-        footGenre.className = 'footGenre';
-        footGenre.textContent = data.artistGenre;
-
-        let footPop = document.createElement('div');
-        footPop.className = 'footPop';
-        footPop.textContent = `Popularity: ${data.pop}`;
-
-        let footFollowers = document.createElement('div');
-        footFollowers.className = 'footFollowers';
-        footFollowers.textContent = `Followers: ${data.followers}`;
-
-        foot.appendChild(footGenre);
-        foot.appendChild(footPop);
-        foot.appendChild(footFollowers);
-    }
-    
-    card.appendChild(foot);
-    logColors(data.image)
-    return card;
-}
-*/
-function logColors(data) {
-    const colorThief = new ColorThief();
-    const imgURL = data;
-    const image = new Image();
-    image.src = imgURL;
-    image.crossOrigin = 'Anonymous';
-
-    if (image.complete) {
-    console.log(colorThief.getColor(image));
-    } else {
-    image.addEventListener('load', function() {
-        console.log(colorThief.getColor(image));
-    });
-}}

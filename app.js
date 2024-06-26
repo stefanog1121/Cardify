@@ -2,9 +2,12 @@ import fetch from 'node-fetch';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
-import querystring from 'querystring'
+import querystring from 'querystring';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import bodyParser from 'body-parser'; // Import body-parser
+import Vibrant from 'node-vibrant';
+import { createCanvas, loadImage, Image } from 'canvas';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -28,12 +31,12 @@ let stateKey = 'spotify_auth_state'; // Cookie Name
 
 let app = express();
 
-app.use(express.static(__dirname + '/public'))
-    .use(cors())
-    .use(cookieParser());
+app.use(cors());
+app.use(cookieParser());
+app.use(bodyParser.json()); // Add body-parser middleware to handle JSON payloads
 
+app.use(express.static(__dirname + '/public'));
 app.use('/node_modules', express.static(__dirname + '/node_modules'));
-
 
 // Watch for Login button press on HTML page
 app.get('/login', function (req, res) { 
@@ -141,6 +144,27 @@ function refreshSpotifyToken(refresh_token, callback) {
             console.error('Error refreshing access token', error);
         });
 }
+
+// New endpoint to process images and extract color palette
+app.post('/get-palette', async (req, res) => {
+    const { imageUrl } = req.body;
+    if (!imageUrl) {
+        return res.status(400).send({ error: 'imageUrl is required' });
+    }
+
+    try {
+        console.log('Fetching palette for image:', imageUrl);
+        const vibrant = new Vibrant(imageUrl);
+        const palette = await vibrant.getPalette();
+        console.log('Palette extracted:', palette);
+
+        res.send(palette);
+    } catch (error) {
+        console.error('Error processing image:', error);
+        res.status(500).send({ error: 'Failed to process image' });
+    }
+});
+
 
 console.log('Listening on 8080: http://localhost:8080/');
 app.listen(8080);
